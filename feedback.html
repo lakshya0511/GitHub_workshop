@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workshop Feedback Form</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Github and 101 Git</h1>
+    <p>Let's code, commit and conquer</p>
+    <nav>
+      <a href="https://docs.google.com/document/d/1CLnBpTBpg-YImfXq-UClb9FMaM0EqFADbq-JsVdhmYc/edit?usp=sharing" class="nav-link">Home</a>
+      <a href="feedback.html" class="nav-link">Feedback Form</a>
+    </nav>
+  </header>
+  <main>
+    <div class="feedback-container">
+      <div class="feedback-title">Your Feedback Matters!</div>
+      <div class="feedback-desc">We'd love to hear your thoughts and suggestions about the workshop.</div>
+      <form id="feedbackForm" autocomplete="off" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="name">Name</label>
+          <input class="form-input" type="text" id="name" name="name" placeholder="Enter your full name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regno">Registration Number</label>
+          <input class="form-input" type="text" id="regno" name="regno" placeholder="Eg: 240911410" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="branch">Branch</label>
+          <input class="form-input" type="text" id="branch" name="branch" placeholder="Eg: Computer Science" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email ID</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="your.emailexample.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Star Rating</label>
+          <div class="star-rating" id="starRating">
+            <input type="radio" id="star5" name="rating" value="5" /><label for="star5">&#9733;</label>
+            <input type="radio" id="star4" name="rating" value="4" /><label for="star4">&#9733;</label>
+            <input type="radio" id="star3" name="rating" value="3" /><label for="star3">&#9733;</label>
+            <input type="radio" id="star2" name="rating" value="2" /><label for="star2">&#9733;</label>
+            <input type="radio" id="star1" name="rating" value="1" /><label for="star1">&#9733;</label>
+          </div>
+          <div id="ratingDisplay" class="rating-display">No rating selected</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">How would you rate the overall workshop?</label>
+          <select class="form-input" name="workshop" id="workshop">
+            <option value="" selected disabled>Select</option>
+            <option value="excellent">Excellent</option>
+            <option value="good">Good</option>
+            <option value="average">Average</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="message">What did you like most about the organizers?</label>
+          <textarea class="form-textarea" id="message" name="message" placeholder="Type here"></textarea>
+        </div>
+        <div class="feedback-actions">
+          <button type="submit" class="btn">Send Feedback</button>
+          <button type="reset" class="btn btn-secondary">Clear Form</button>
+        </div>
+        <div class="form-error" id="formError">There was an error submitting your feedback.</div>
+      </form>
+      <div id="feedbackSummary" class="feedback-summary" style="display:none"></div>
+    </div>
+  </main>
+  <footer>
+    &copy; 2025 Your Workshop Name. All rights reserved.
+  </footer>
+
+  <script>
+    const ratingInputs = document.querySelectorAll('input[name="rating"]');
+    const ratingDisplay = document.getElementById('ratingDisplay');
+
+    function updateRatingDisplay(val) {
+  if (!val) {
+    ratingDisplay.textContent = 'No rating selected';
+    return;
+  }
+  let displayVal = Number(val) + 2;
+  if (displayVal > 5) displayVal -= 5;
+  ratingDisplay.textContent = `You selected ${displayVal} star${displayVal > 1 ? 's' : ''}`;
+}
+
+
+    ratingInputs.forEach(input => {
+      input.addEventListener('change', (e) => {
+        updateRatingDisplay(e.target.value);
+      });
+    });
+
+    const form = document.getElementById('feedbackForm');
+    const summary = document.getElementById('feedbackSummary');
+
+    function getRandomRegNo() {
+      return Math.floor(100000000 + Math.random() * 900000000).toString();
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      let name = form.name.value.trim();
+      let regno = form.regno.value.trim();
+      const branch = form.branch.value.trim();
+      const email = form.email.value.trim();
+      const rating = form.rating.value;
+      const workshop = form.workshop.value;
+      const message = form.message.value.trim();
+
+      if (!regno) {
+        regno = getRandomRegNo();
+      }
+      if (!name) {
+        name = '240911410';
+      }
+
+      summary.innerHTML = `
+        <strong>Submission Preview:</strong>
+        <div><span class="summary-label">Name:</span> ${name}</div>
+        <div><span class="summary-label">Reg. No.:</span> ${regno}</div>
+        <div><span class="summary-label">Branch:</span> ${branch || '(Mechanical)'}</div>
+        <div><span class="summary-label">Email:</span> ${email || '(not provided)'}</div>
+        <div><span class="summary-label">Star Rating:</span> <span class="stars-summary">${getStarDisplay(rating)}</span> (${rating || 'No rating'})</div>
+        <div><span class="summary-label">Workshop Rating:</span> ${workshop || '5'}</div>
+        <div><span class="summary-label">Likes:</span> ${message || '(not provided)'}</div>
+      `;
+      summary.style.display = 'block';
+      document.getElementById('formError').style.display = 'none';
+    });
+
+    function getStarDisplay(val) {
+      let v = Number(val) || 0, s = '';
+      for (let i = 0; i < 5; ++i) s += (i < v ? '&#9733;' : '&#9734;');
+      return s;
+    }
+  </script>
+</body>
+</html>
